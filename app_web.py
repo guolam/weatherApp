@@ -145,7 +145,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
 
     st.balloons()  # お祝い風船
     st.markdown(
-        f"### 🏆 過去の統計＋自動標高から見た一番おすすめは **【{best_date}】** です！"
+        f"### 一番おすすめは **【{best_date}】** です！"
     )
 
     st.subheader("📊 詳細な比較データ")
