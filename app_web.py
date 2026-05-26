@@ -117,7 +117,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     # ==========================================
     st.header("2. 比較結果")
     st.success(f"📍 {location.address}")
-    st.info(f"⛰️ この場所の標高は **{elevation:.0f} m** です。")
+    st.info(f"⛰️ この場所の標高は **{elevation:.0f} m**")
 
     target_dates = [date1, date2, date3]
     results_list = []
@@ -133,7 +133,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
                     "日程": f"{d.month}月{d.day}日",
                     "晴れ確率": f"{row['晴れ確率(%)']:.1f}%",
                     "平地の気温": f"{row['平均最高気温_平地']:.1f}度",
-                    "山頂の気温": f"{row['山頂の予想最高気温']:.1f}度",
+                    "⛰️山頂の気温": f"{row['山頂の予想最高気温']:.1f}度",
                     "平均日照時間": f"{row['平均日照時間']:.1f}時間",
                     "スコア": row["登山おすすめスコア"],
                 }
@@ -149,10 +149,10 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     )
 
     st.subheader("📊 詳細な比較データ")
-    st.table(res_df[["日程", "晴れ確率", "平地の気温", "山頂の気温", "平均日照時間"]])
+    st.table(res_df[["日程", "晴れ確率", "平地の気温", "⛰️山頂の気温", "平均日照時間"]])
 
     # 動的なアドバイス
-    best_mountain_temp = res_df.loc[best_idx, "山頂の気温"]
+    best_mountain_temp = res_df.loc[best_idx, "⛰️山頂の気温"]
     temp_val = float(str(best_mountain_temp).replace("度", ""))
 
     st.info("ℹ️ **おすすめ日の装備アドバイス**")
