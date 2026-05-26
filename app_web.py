@@ -23,11 +23,11 @@ place_input = st.text_input("調べたい山や場所の名前", value="")
 st.write("📅 比較したい日付を最大3つ選んでください：")
 col1, col2, col3 = st.columns(3)
 with col1:
-    date1 = st.date_input("候補日 1", value=pd.to_datetime(""))
+    date1 = st.date_input("候補日 1", value=pd.to_datetime("2026-05-30"))
 with col2:
-    date2 = st.date_input("候補日 2", value=pd.to_datetime(""))
+    date2 = st.date_input("候補日 2", value=pd.to_datetime("2026-05-31"))
 with col3:
-    date3 = st.date_input("候補日 3", value=pd.to_datetime(""))
+    date3 = st.date_input("候補日 3", value=pd.to_datetime("2026-06-06"))
 
 # 計算開始ボタン
 if st.button("過去の天気を計算・比較する", type="primary"):
