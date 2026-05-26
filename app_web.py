@@ -8,7 +8,7 @@ from geopy.geocoders import Nominatim
 # ==========================================
 st.set_page_config(page_title="登山お天気計画アプリ", page_icon="⛰️", layout="centered")
 
-st.title("⛰️ 登山特化型・お天気計画アプリ (完全自動版)")
+st.title("お天気計画アプリ")
 st.write("山名を入力するだけで、過去30年のデータと【自動取得した標高】から、山頂の天気を一発比較します。")
 
 # ==========================================
