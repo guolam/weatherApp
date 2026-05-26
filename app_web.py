@@ -10,7 +10,7 @@ from geopy.geocoders import Nominatim
 st.set_page_config(page_title="登山お天気計画アプリ", page_icon="⛰️", layout="centered")
 
 st.title("お天気計画アプリ")
-st.write("山名を入力するだけで、過去50年の気象データと自動取得した標高から、山頂の天気を一発比較します。")
+st.write("山名を入力するだけで、過去70年の気象データと自動取得した標高から、山頂の天気を一発比較します。")
 
 # ==========================================
 # 入力エリア
@@ -58,10 +58,10 @@ if st.button("過去の天気を計算・比較する", type="primary"):
             st.stop()
 
     # ==========================================
-    # 気象データと「標高」の取得 (過去50年分)
+    # 気象データと「標高」の取得 (過去70年分)
     # ==========================================
-    with st.spinner("過去50年分の気象データと標高をダウンロード中..."):
-        start_date = "1976-01-01"
+    with st.spinner("過去70年分の気象データと標高をダウンロード中..."):
+        start_date = "1940-01-01"
         end_date = pd.to_datetime("today").strftime("%Y-%m-%d") 
         url = f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,precipitation_sum,sunshine_duration&timezone=Asia%2FTokyo"
 
