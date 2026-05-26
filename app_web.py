@@ -57,7 +57,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
             st.error(f"場所の検索エラー: {e}")
             st.stop()
 
-    # ==========================================
+ # ==========================================
     # 気象データと「標高」の取得 (過去70年分)
     # ==========================================
     with st.spinner("過去70年分の気象データと標高をダウンロード中..."):
@@ -68,6 +68,17 @@ if st.button("過去の天気を計算・比較する", type="primary"):
         try:
             response = requests.get(url)
             res_json = response.json()
+            
+            # 【重要】APIがエラーを返していないか最初にチェック！
+            if "error" in res_json:
+                st.error(f"Open-Meteo APIエラー: {res_json.get('reason', '原因不明のエラー')}")
+                st.stop()
+                
+            # 【重要】'daily' キーがちゃんと存在するかチェックしてからDataFrameにする
+            if "daily" not in res_json:
+                st.error("APIのレスポンスに気象データ（daily）が含まれていませんでした。")
+                st.stop()
+                
             df = pd.DataFrame(res_json["daily"])
             
             if "elevation" in res_json:
@@ -79,12 +90,16 @@ if st.button("過去の天気を計算・比較する", type="primary"):
             st.error(f"データ取得エラー: {e}")
             st.stop()
 
-    # データの整形
+    # ==========================================
+    # データの整形と計算（ここからは既存のロジック）
+    # ==========================================
     df["年月日"] = pd.to_datetime(df["time"])
     df["最高気温"] = df["temperature_2m_max"]
     df["降水量"] = df["precipitation_sum"]
+    
+    # 💡 None（欠損値）が含まれている場合の対策を入れて安全に処理
     df["日照時間"] = [
-        d / 3600 if d is not None else 0 for d in df["sunshine_duration"]
+        d / 3600 if pd.notnull(d) else 0 for d in df["sunshine_duration"]
     ]
     df["晴れカウント"] = ((df["降水量"] < 1.0) & (df["日照時間"] >= 4.0)).astype(int)
     df["月"] = df["年月日"].dt.month
@@ -116,13 +131,12 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     calendar_stats["登山おすすめスコア"] = calendar_stats.apply(calculate_climbing_score, axis=1)
 
     # ==========================================
-    # 【変更】指定された期間の日付リストを作成して比較
+    # 指定された期間の日付リストを作成して比較
     # ==========================================
     st.header("2. 比較結果")
     st.success(f"📍 {location.address}")
     st.info(f"⛰️ この場所の標高は **{elevation:.0f} m**")
 
-    # 指定された開始日から終了日までの全日付を生成
     target_dates = pd.date_range(start=start_date_input, end=end_date_input)
     results_list = []
 
@@ -132,7 +146,6 @@ if st.button("過去の天気を計算・比較する", type="primary"):
         ]
         if not stats.empty:
             row = stats.iloc[0]
-            # 曜日も分かると便利なので追加
             weekday_str = ["月", "火", "水", "木", "金", "土", "日"][d.weekday()]
             
             results_list.append(
@@ -152,7 +165,6 @@ if st.button("過去の天気を計算・比較する", type="primary"):
 
     res_df = pd.DataFrame(results_list)
     
-    # 最もスコアが高い日を特定
     best_idx = res_df["スコア"].idxmax()
     best_date = res_df.loc[best_idx, "日程"]
 
@@ -162,12 +174,10 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     )
 
     st.subheader("📊 期間内の詳細データ一覧")
-    # スコア列も含めて表示すると、なぜその日がお勧めなのか分かりやすくなります
     st.table(res_df[["日程", "晴れ確率", "平地の気温", "⛰️山頂の気温", "平均日照時間"]])
 
-    # 動的なアドバイス
-    best_mountain_temp = res_df.loc[best_idx, "⛰️山頂の気温"]
-    temp_val = float(str(best_mountain_temp).replace("度", ""))
+    # 動的なアドバイス（型変換エラーを防ぐため安全に数値化）
+    temp_val = float(res_df.loc[best_idx, "⛰️山頂の気温"].replace("度", ""))
 
     st.info("ℹ️ **おすすめ日の装備アドバイス**")
     if temp_val < 10:
