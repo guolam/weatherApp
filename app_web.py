@@ -86,7 +86,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     df["日照時間"] = [
         d / 3600 if d is not None else 0 for d in df["sunshine_duration"]
     ]
-    df["晴れカウント"] = (df["降水量"] == 0).astype(int)
+    df["晴れカウント"] = ((df["降水量"] < 1.0) & (df["日照時間"] >= 4.0)).astype(int)
     df["月"] = df["年月日"].dt.month
     df["日"] = df["年月日"].dt.day
 
