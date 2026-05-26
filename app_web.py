@@ -62,7 +62,7 @@ if st.button("過去の天気を計算・比較する", type="primary"):
     # ==========================================
     with st.spinner("過去70年分の気象データと標高をダウンロード中..."):
         start_date = "1940-01-01"
-        end_date = pd.to_datetime("today").strftime("%Y-%m-%d") 
+        end_date = (pd.to_datetime("today") - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
         url = f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={start_date}&end_date={end_date}&daily=temperature_2m_max,precipitation_sum,sunshine_duration&timezone=Asia%2FTokyo"
 
         try:
